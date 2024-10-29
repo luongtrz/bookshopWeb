@@ -1,0 +1,84 @@
+// Giả sử dữ liệu nhận xét tĩnh hoặc tải từ server (có thể dùng JSON nếu có nhiều nhận xét)
+const commentsData = {
+    "1": ["Great book!", "Loved the illustrations."],
+    "2": ["Informative and well-written.", "A bit lengthy, but worth it."],
+    // Nhận xét cho các sách khác
+  };
+
+  function updateTotalPrice(quantity, bookPrice) {
+    console.log(bookPrice)
+
+
+    totalPrice = bookPrice * quantity;
+    document.getElementById("total-price").innerText = totalPrice.toLocaleString();
+  }
+  
+
+function initializeQuantityControls(bookPrice) {
+    const quantityInput = document.getElementById("quantity");
+    const increaseBtn = document.getElementById("increase");
+    const decreaseBtn = document.getElementById("decrease");
+
+    // Bắt đầu với số lượng là 1
+    let quantity = 1;
+    updateTotalPrice(quantity,bookPrice);
+
+    // Xử lý sự kiện tăng số lượng
+    increaseBtn.addEventListener("click", () => {
+        quantity++;
+        quantityInput.value = quantity;
+        decreaseBtn.disabled = quantity <= 1;
+        updateTotalPrice(quantity,bookPrice);
+    });
+    // Xử lý sự kiện giảm số lượng
+    decreaseBtn.addEventListener("click", () => {
+        if (quantity > 1) {
+            quantity--;
+            quantityInput.value = quantity;
+            decreaseBtn.disabled = quantity <= 1;
+            updateTotalPrice(quantity,bookPrice);
+        }
+    });
+}
+
+
+// Hàm để lấy ID sách từ URL
+function getBookIdFromUrl() {
+    const params = new URLSearchParams(window.location.search);
+    return params.get("id");
+  }
+  
+  // Hàm để tải dữ liệu sách từ JSON và hiển thị sách
+async function loadBookDetails() {
+    const bookId = getBookIdFromUrl();
+   const response = await fetch("../book-data/book.json"); // Đường dẫn đến file JSON
+   const books = await response.json();
+   const book = books.find(b => b.id == bookId);
+ 
+    if (book) {
+      document.getElementById("book-title").innerText = `Sách: ${book.title}`;
+      document.getElementById("book-image").src = `../book-data/${book.image}`;
+      document.getElementById("book-author").innerText = `Tác giả: ${book.author}`;
+      document.getElementById("book-description").innerText = book.description;
+      document.getElementById("book-company").innerText = `Nhà xuất bản: ${book.company}`;
+      document.getElementById("book-size").innerText = `Kích thước: ${book.size}`;
+      document.getElementById("book-price").innerText = "Giá: " + book.price.toLocaleString() + " VND";
+      document.getElementById("book-pages").innerText = `Số trang: ${book.pages}`;
+      document.getElementById("book-rating").innerText = `Đánh giá: ${book.rating}`;
+      document.getElementById("book-sold").innerText = `Đã bán ${book.sold} cuốn`;  
+
+      // Cập nhật tổng tiền ban đầu
+      updateTotalPrice(1,book.price);
+
+      // Khởi tạo sự kiện cho các nút tăng/giảm số lượng
+      initializeQuantityControls(book.price);
+  
+    } else {
+      document.getElementById("book-container").innerText = "Book not found";
+    }
+  }
+  
+  // Gọi hàm để tải chi tiết sách
+  loadBookDetails();
+  
+

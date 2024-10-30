@@ -15,9 +15,11 @@ const commentsData = {
   
 
 function initializeQuantityControls(bookPrice) {
-    const quantityInput = document.getElementById("quantity");
-    const increaseBtn = document.getElementById("increase");
-    const decreaseBtn = document.getElementById("decrease");
+    let quantityInput = document.getElementById("quantity");
+    console.log(quantityInput +" quantityInput 1");
+    let increaseBtn = document.getElementById("increase");
+    let decreaseBtn = document.getElementById("decrease");
+
 
     // Bắt đầu với số lượng là 1
     let quantity = 1;
@@ -26,6 +28,7 @@ function initializeQuantityControls(bookPrice) {
     // Xử lý sự kiện tăng số lượng
     increaseBtn.addEventListener("click", () => {
         quantity++;
+        console.log(quantity+"quantity")
         quantityInput.value = quantity;
         decreaseBtn.disabled = quantity <= 1;
         updateTotalPrice(quantity,bookPrice);
